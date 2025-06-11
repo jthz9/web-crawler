@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import asyncio
 
 class KnrecAnalyzer:
     """
@@ -37,7 +38,7 @@ class KnrecAnalyzer:
         self.results_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'output', 'analysis', 'knrec')
         os.makedirs(self.results_dir, exist_ok=True)
     
-    def analyze_faq_page(self, url="https://www.knrec.or.kr/biz/faq/faq_list01.do", wait_time=5):
+    async def analyze_faq_page(self, url="https://www.knrec.or.kr/biz/faq/faq_list01.do", wait_time=5):
         """
         KNREC FAQ 페이지 구조 분석
         
@@ -75,7 +76,8 @@ class KnrecAnalyzer:
                 "faq_items": [],
                 "pagination_count": 0,
                 "page_structure": {},
-                "element_counts": {}
+                "element_counts": {},
+                "page11_pagination": []
             }
             
             # iframe 확인
@@ -108,6 +110,37 @@ class KnrecAnalyzer:
             
             # 상세 페이지 분석
             self._analyze_detail_page(driver, result)
+            
+            # 11페이지로 이동해서 페이지네이션 구조 확인
+            print("11페이지로 이동해서 페이지네이션 분석 중...")
+            driver.get("https://www.knrec.or.kr/biz/faq/faq_list01.do?page=11&")
+            await asyncio.sleep(3)
+            
+            # 간편검색 탭 클릭
+            simple_search_tab = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '간편검색')]"))
+            )
+            driver.execute_script("arguments[0].click();", simple_search_tab)
+            await asyncio.sleep(2)
+            
+            # 11페이지 페이지네이션 분석
+            page11_pagination = []
+            try:
+                pagination_elem = driver.find_element(By.CSS_SELECTOR, ".paging")
+                links = pagination_elem.find_elements(By.TAG_NAME, "a")
+                
+                for i, link in enumerate(links):
+                    page11_pagination.append({
+                        "index": i,
+                        "text": link.text.strip(),
+                        "href": link.get_attribute("href"),
+                        "class": link.get_attribute("class")
+                    })
+            except Exception as e:
+                print(f"11페이지 페이지네이션 분석 오류: {e}")
+            
+            result["page11_pagination"] = page11_pagination
+            print(f"11페이지 페이지네이션 항목 수: {len(page11_pagination)}")
             
             # 결과 저장
             self._save_result(result)
@@ -580,7 +613,7 @@ def main():
     args = parser.parse_args()
     
     analyzer = KnrecAnalyzer(headless=args.headless)
-    analyzer.analyze_faq_page(url=args.url, wait_time=args.wait)
+    asyncio.run(analyzer.analyze_faq_page(url=args.url, wait_time=args.wait))
 
 
 if __name__ == "__main__":

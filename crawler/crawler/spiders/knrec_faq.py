@@ -30,6 +30,9 @@ class KnrecFaqSpider(BaseRenewableEnergySpider):
         "https://www.knrec.or.kr/biz/faq/faq_list01.do"  # 간편검색 탭 URL
     ]
     
+    # 페이지 로딩 대기 시간 설정
+    page_load_delay = 3
+    
     def __init__(self, *args, **kwargs):
         super(KnrecFaqSpider, self).__init__(*args, **kwargs)
         # 테스트 모드에서는 최대 10개의 FAQ만 크롤링
@@ -373,60 +376,25 @@ class KnrecFaqSpider(BaseRenewableEnergySpider):
             self.logger.error(traceback.format_exc())
     
     def _click_next_page(self, driver):
-        """다음 페이지 링크를 클릭하여 이동"""
+        """다음 페이지 링크를 클릭하여 이동 - 직접 URL 방식"""
         try:
             # 다음 페이지 번호 (현재 페이지)
             next_page_number = self.current_page
             self.logger.info(f"다음 페이지 번호: {next_page_number} 클릭 시도")
             
-            # 분석 결과에서 페이지네이션 정보 활용
-            if "pagination" in self.analysis_result and len(self.analysis_result["pagination"]) > 0:
-                # 페이지네이션 링크 찾기
-                for page_link in self.analysis_result["pagination"]:
-                    if page_link.get("text") == str(next_page_number) and page_link.get("href"):
-                        self.logger.info(f"분석 결과에서 다음 페이지 URL 찾음: {page_link['href']}")
-                        driver.get(page_link["href"])
-                        return True
+            # 직접 URL로 이동 (가장 확실한 방법)
+            direct_url = f"https://www.knrec.or.kr/biz/faq/faq_list01.do?page={next_page_number}&"
+            self.logger.info(f"직접 URL로 이동: {direct_url}")
             
-            # 분석 결과에서 찾지 못한 경우 직접 찾기
-            # 페이지네이션 요소 찾기
-            pagination = driver.find_element(By.CSS_SELECTOR, ".paging")
+            driver.get(direct_url)
+            time.sleep(self.page_load_delay)
             
-            # 다음 페이지 링크 찾기 (페이지 번호 또는 다음 버튼)
-            next_page_link = None
-            
-            # 방법 1: 페이지 번호로 찾기
-            try:
-                # 현재 페이지 번호를 찾아서 클릭
-                next_page_link = pagination.find_element(By.XPATH, f".//a[text()='{next_page_number}']")
-                self.logger.info(f"페이지 번호 {next_page_number} 링크 발견")
-            except Exception as e:
-                self.logger.error(f"페이지 번호 {next_page_number} 링크 찾기 실패: {str(e)}")
-                pass
-            
-            # 방법 2: 다음 버튼 찾기
-            if not next_page_link:
-                try:
-                    next_page_link = pagination.find_element(By.CSS_SELECTOR, "a img[alt='다음 페이지']")
-                    next_page_link = next_page_link.find_element(By.XPATH, "./..")  # 부모 요소 (a 태그)
-                    self.logger.info("다음 페이지 버튼 발견")
-                except Exception as e:
-                    self.logger.error(f"다음 페이지 버튼 찾기 실패: {str(e)}")
-                    pass
-            
-            if next_page_link:
-                self.logger.info(f"페이지 {next_page_number} 링크 클릭 시도")
-                # JavaScript로 클릭 실행 (더 안정적인 방법)
-                driver.execute_script("arguments[0].click();", next_page_link)
-                self.logger.info(f"페이지 {next_page_number} 링크 클릭 완료")
-                time.sleep(3)  # 페이지 로딩 대기
-                return True
-            
-            return False
+            self.current_page = next_page_number
+            self.logger.info(f"다음 페이지로 이동 완료 (현재 페이지: {self.current_page})")
+            return True
+                
         except Exception as e:
-            self.logger.error(f"다음 페이지 링크 클릭 중 오류: {str(e)}")
-            import traceback
-            self.logger.error(traceback.format_exc())
+            self.logger.error(f"다음 페이지 링크 클릭 중 오류: {e}")
             return False
     
     def detect_energy_type(self, text):

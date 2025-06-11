@@ -1,0 +1,338 @@
+{
+  "url": "https://www.knrec.or.kr/biz/faq/faq_list01.do",
+  "title": "신·재생에너지센터 | FAQ 및 질문하기 | 간편검색",
+  "timestamp": "2025-06-11T16:18:58.606813",
+  "iframe_count": 0,
+  "tab_menu": [],
+  "faq_items": [
+    {
+      "index": 0,
+      "text": "ESS·EMS 융합시스템 보급사업은 무엇인가요?\n초기 투자 부담이 높은 ESS, EMS 등 에너지신산업 기술을 융합한 시스템 구축비용의 일부를 지원하여 E ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=422&depth_1=A010000&depth_2=A011000",
+      "title": "ESS·EMS 융합시스템 보급사업은 무엇인가요?",
+      "content": "초기 투자 부담이 높은 ESS, EMS 등 에너지신산업 기술을 융합한 시스템 구축비용의 일부를 지원하여 E ...."
+    },
+    {
+      "index": 1,
+      "text": "신·재생에너지 확대기반조성은 어떤 사업인가요?\n신·재생에너지 확대기반조성사업은 지방자치단체 소유 건물 및 시설물 또는 지방자치단체가 소유·관리하는 사회복지 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=722&depth_1=A010000&depth_2=A010400",
+      "title": "신·재생에너지 확대기반조성은 어떤 사업인가요?",
+      "content": "신·재생에너지 확대기반조성사업은 지방자치단체 소유 건물 및 시설물 또는 지방자치단체가 소유·관리하는 사회복지 ...."
+    },
+    {
+      "index": 2,
+      "text": "신·재생에너지 금융지원사업은 어떤 사업인가요?\n신·재생에너지 전용설비에 대한 생산자금, 시설자금 및 운전자금의 일부를 장기 저리로 융자 지원하는 사업입니다 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=187&depth_1=A010000&depth_2=A010600",
+      "title": "신·재생에너지 금융지원사업은 어떤 사업인가요?",
+      "content": "신·재생에너지 전용설비에 대한 생산자금, 시설자금 및 운전자금의 일부를 장기 저리로 융자 지원하는 사업입니다 ...."
+    },
+    {
+      "index": 3,
+      "text": "신청하는 정부지원금 전액을 지급받을 수 있나요?\n정부지원금 최대 지원 비율은 ESS 용도에 따라 다르며, 각 사업당 지원금액은 평가위원회 의견 등을 반영하 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=423&depth_1=A010000&depth_2=A011000",
+      "title": "신청하는 정부지원금 전액을 지급받을 수 있나요?",
+      "content": "정부지원금 최대 지원 비율은 ESS 용도에 따라 다르며, 각 사업당 지원금액은 평가위원회 의견 등을 반영하 ...."
+    },
+    {
+      "index": 4,
+      "text": "설치계획서는 언제 제출해야 하나요?\n설치계획서 제출은 건축허가를 받기 전에 신·재생에너지센터 전자민원 시스템을 통해 제출하여 승인받아야 합니다. ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=333&depth_1=A010000&depth_2=A011200",
+      "title": "설치계획서는 언제 제출해야 하나요?",
+      "content": "설치계획서 제출은 건축허가를 받기 전에 신·재생에너지센터 전자민원 시스템을 통해 제출하여 승인받아야 합니다. ...."
+    },
+    {
+      "index": 5,
+      "text": "신·재생에너지설비 안전사고를 관리하기 위한 시스템이 마련되어 있나요?\n신·재생에너지설비 안전사고를 사전에 예방하기 위해 태풍 예상지역별 태양광 안전점검 요령 문자 및 스티커 발 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=317&depth_1=A050000&depth_2=A050200",
+      "title": "신·재생에너지설비 안전사고를 관리하기 위한 시스템이 마련되어 있나요?",
+      "content": "신·재생에너지설비 안전사고를 사전에 예방하기 위해 태풍 예상지역별 태양광 안전점검 요령 문자 및 스티커 발 ...."
+    },
+    {
+      "index": 6,
+      "text": "탄소검증제가 무엇인가요?\n탄소검증제는 태양광 모듈 제품의 제조 전(全)과정에서 발생하는 탄소배출량을 산정·검증하여 이산화탄소 배출이 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=323&depth_1=A050000&depth_2=A050400",
+      "title": "탄소검증제가 무엇인가요?",
+      "content": "탄소검증제는 태양광 모듈 제품의 제조 전(全)과정에서 발생하는 탄소배출량을 산정·검증하여 이산화탄소 배출이 ...."
+    },
+    {
+      "index": 7,
+      "text": "재생에너지 사용 확인제도 참여기준은 어떻게 되나요?\n기업, 단체 등 재생에너지 전기를 사용하고 확인서를 발급받고자 하는 전기소비자면 참여가 가능합니다. 단 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=297&depth_1=A020000&depth_2=A020400",
+      "title": "재생에너지 사용 확인제도 참여기준은 어떻게 되나요?",
+      "content": "기업, 단체 등 재생에너지 전기를 사용하고 확인서를 발급받고자 하는 전기소비자면 참여가 가능합니다. 단 ...."
+    },
+    {
+      "index": 8,
+      "text": "도심형 태양광 금융지원사업은 어떤 사업인가요?\n건축물 및 부속시설물을 활용하여 태양광 발전설비를 설치하는 자에게 장기저리 융자를 지원하는 사업입니다. * ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=228&depth_1=A010000&depth_2=A010600",
+      "title": "도심형 태양광 금융지원사업은 어떤 사업인가요?",
+      "content": "건축물 및 부속시설물을 활용하여 태양광 발전설비를 설치하는 자에게 장기저리 융자를 지원하는 사업입니다. * ...."
+    },
+    {
+      "index": 9,
+      "text": "신·재생에너지 기술개발 및 이용·보급기본계획은 무엇인가요?\n신·재생에너지 기술개발 및 이용·보급기본계획(이하 \"기본계획\")이란 신·재생에너지 기술개발 및 이용·보급 ....",
+      "class": "",
+      "link": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=482&depth_1=A020000&depth_2=A020100",
+      "title": "신·재생에너지 기술개발 및 이용·보급기본계획은 무엇인가요?",
+      "content": "신·재생에너지 기술개발 및 이용·보급기본계획(이하 \"기본계획\")이란 신·재생에너지 기술개발 및 이용·보급 ...."
+    }
+  ],
+  "pagination_count": 12,
+  "page_structure": {
+    "#content": {
+      "count": 1,
+      "class": "sub_cont_wrap"
+    }
+  },
+  "element_counts": {
+    "li": 335
+  },
+  "page11_pagination": [
+    {
+      "index": 0,
+      "text": "1",
+      "href": "javascript:void(0);",
+      "class": ""
+    },
+    {
+      "index": 1,
+      "text": "2",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=2&",
+      "class": ""
+    },
+    {
+      "index": 2,
+      "text": "3",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=3&",
+      "class": ""
+    },
+    {
+      "index": 3,
+      "text": "4",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=4&",
+      "class": ""
+    },
+    {
+      "index": 4,
+      "text": "5",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=5&",
+      "class": ""
+    },
+    {
+      "index": 5,
+      "text": "6",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=6&",
+      "class": ""
+    },
+    {
+      "index": 6,
+      "text": "7",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=7&",
+      "class": ""
+    },
+    {
+      "index": 7,
+      "text": "8",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=8&",
+      "class": ""
+    },
+    {
+      "index": 8,
+      "text": "9",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=9&",
+      "class": ""
+    },
+    {
+      "index": 9,
+      "text": "10",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=10&",
+      "class": ""
+    },
+    {
+      "index": 10,
+      "text": "",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=11&",
+      "class": ""
+    },
+    {
+      "index": 11,
+      "text": "",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=35&",
+      "class": ""
+    }
+  ],
+  "iframes": [],
+  "simple_search_tab_clicked": true,
+  "faq_count": 10,
+  "faq_selector_used": "ul.result_list li",
+  "pagination": [
+    {
+      "index": 0,
+      "text": "1",
+      "href": "javascript:void(0);",
+      "class": ""
+    },
+    {
+      "index": 1,
+      "text": "2",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=2&",
+      "class": ""
+    },
+    {
+      "index": 2,
+      "text": "3",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=3&",
+      "class": ""
+    },
+    {
+      "index": 3,
+      "text": "4",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=4&",
+      "class": ""
+    },
+    {
+      "index": 4,
+      "text": "5",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=5&",
+      "class": ""
+    },
+    {
+      "index": 5,
+      "text": "6",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=6&",
+      "class": ""
+    },
+    {
+      "index": 6,
+      "text": "7",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=7&",
+      "class": ""
+    },
+    {
+      "index": 7,
+      "text": "8",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=8&",
+      "class": ""
+    },
+    {
+      "index": 8,
+      "text": "9",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=9&",
+      "class": ""
+    },
+    {
+      "index": 9,
+      "text": "10",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=10&",
+      "class": ""
+    },
+    {
+      "index": 10,
+      "text": "",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=11&",
+      "class": ""
+    },
+    {
+      "index": 11,
+      "text": "",
+      "href": "https://www.knrec.or.kr/biz/faq/faq_list01.do?page=35&",
+      "class": ""
+    }
+  ],
+  "keyword_elements": {
+    "FAQ": {
+      "count": 2,
+      "details": [
+        {
+          "index": 0,
+          "text": "FAQ 및 질문하기",
+          "class": ""
+        },
+        {
+          "index": 1,
+          "text": "",
+          "class": ""
+        }
+      ]
+    },
+    "faq": {
+      "count": 0,
+      "details": []
+    },
+    "질문": {
+      "count": 2,
+      "details": [
+        {
+          "index": 0,
+          "text": "FAQ 및 질문하기",
+          "class": ""
+        },
+        {
+          "index": 1,
+          "text": "",
+          "class": ""
+        }
+      ]
+    },
+    "답변": {
+      "count": 0,
+      "details": []
+    },
+    "간편검색": {
+      "count": 1,
+      "details": [
+        {
+          "index": 0,
+          "text": "간편검색",
+          "class": "on"
+        }
+      ]
+    }
+  },
+  "source_keywords": {
+    "board_faq": false,
+    "faq_list": true,
+    "board_list_faq": false,
+    "accordion": false,
+    "toggle": false
+  },
+  "html_sample": "<html lang=\"ko\"><head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no\">\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n<meta name=\"format-detection\" content=\"telephone=no\">\n<meta name=\"description\" content=\"한국에너지공단 신재생에너지센터\">\n<meta name=\"keywords\" content=\"한국에너지공단 신재생에너지센터\">\n<title>신·재생에너지센터 | FAQ 및 질문하기 | 간편검색</title>\n<link rel=\"stylesheet\" href=\"/biz/common/css/default.css\">\n<link rel=\"stylesheet\" href=\"/biz/common/css/default.css\" media=\"print\">\n<link href=\"/biz/common/css/swiper-bundle.min.css\" rel=\"stylesheet\" type=\"text/css\">\n<script src=\"/biz/common/js/jquery-1.11.0.min.js\"></script>\n<script src=\"/biz/common/js/design.js\"></script>\n<script src=\"/biz/common/js/swiper-bundle.min.js\"></script>\n<script src=\"/biz/common/js/calendar.js\"></script>\n<script src=\"/biz/common/js/plugin/tooltip.js\"></script>\n<script src=\"/biz/common/js/plugin/utility.js\"></script>\n<script src=\"/biz/common/js/module/param.js\"></script>\n<script src=\"/biz/common/js/module/hash.js\"></script>\n<script src=\"/biz/common/js/module/dynamicTable.js\"></script>\n<script src=\"/biz/common/js/common.js\"></script>\n<script src=\"/biz/common/js/input_chk.js\"></script>\n<script src=\"/biz/common/js/frameLayer.js\"></script>\n<script src=\"/biz/common/js/jquery-ui.min.js\"></script>\n<script src=\"/biz/common/js/jquery-ui-i18n.min.js\"></script>\t\n<script src=\"/biz/common/js/jquery.rwdImageMaps.min.js\"></script>\t\n<script src=\"/biz/common/js/cookie.js\"></script>\n\n<script>\n\n\t/*function fn_tag_in(value){\n\t\t\t\n\t\tif(value == \"1\"){\n\t\t\t\n\t\t\t$(\"#searchword\").val(\"설치의무화\");\t\t\t\n\t\t\t$(\"#searchform\").submit();\n\t\t\t\n\t\t}else if(value == \"2\"){\n\t\t\t\n\t\t\t$(\"#searchword\").val(\"주택지원사업\");\t\t\t\n\t\t\t$(\"#searchform\").submit();\n\t\t\t\n\t\t}else if(value == \"3\"){\n\t\t\t\n\t\t\t$(\"#searchword\").val(\"사후관리\");\t\t\t\n\t\t\t$(\"#searchform\").submit();\n\t\t}\n\t}*/\n\n\tfunction fn_tag_in(value){\t\n\t\t\n\t\t/*$.ajax({\n\t\t\ttype : \"POST\", \n\t\t\turl : \"/biz/search/total_search.do\",\n\t\t    type: \"GET\",\n\t\t\tdata : {\"searchword\" : value},\n\t\t\tdataType : \"text\"\n\t\t\tsuccess : function(result){\n\t\t\t\tlocation.href=\"/biz/search/total_search.do\";\n\t\t\t}\t\n\t\t});*/\n\t\tlocation.href =\"/biz/search/total_search.do?searchword=\"+value;\n\t};\n\t\n\t\n\t/*function fn_search_submit(){\n\t\tconsole.log();\n\t\t$(\"#searchform\").submit();\n\t}*/\n\t\n\tfunction fn_search_submit(){\t\n\t\t\n\t\tvar searchword = $(\"#searchword\").val();\n\t\t/*$.ajax({\n\t\t\ttype : \"POST\", \n\t\t\turl : \"/biz/search/total_search.do\",\n\t\t\tdata : {\"searchword\" : searchword},\n\t\t\tdataType : \"text\",\n\t\t\tsuccess : function(result){\n\t\t\t\tlocation.href=\"/biz/search/total_search.do\";\n\t\t\t}\t\n\t\t});*/\n\t\tlocation.href =\"/biz/search/total_search.do?searchword=\"+searchword;\n\t};\n\t\n\tfunction fn_ready(){\n\t\talert(\"현재 준비 중입니다.\");\n\t};\n\t\n</script>\n\n</head>\n\n\n<body>\n<div class=\"skip_cont\">\n\t<a href=\"#gnb\">주메뉴 바로가기</a>\n\t<a href=\"#content\">본문 바로가기</a>\n\t<a href=\"#footer\">푸터 바로가기</a>\n</div>\n\n<!--body_wrap-->\n<div class=\"body_wrap\">\n\n\t<!--common_wrapper-->\n\t<div class=\"common_wrap\">\n\t\t\n\t\t<a href=\"javascript:;\" class=\"btn_chat\"><img src=\"/biz/images/common/ico_chat.png\" alt=\"챗봇 민원상담 이미지\"></a>\n\t\t\n\t\t<!--header_wrapper-->\n\t\t<div class=\"header_wrap\">\n\t\t\n\t\t\t<!--header_inner-->\n\t\t\t<div class=\"header_inner fix\">\n\t\t\t\t<ul class=\"header_inner_top fix\">\n\t\t\t\t\t<li class=\"header_top_btn\"><a href=\"https://www.energy.or.kr\" target=\"_blank\" title=\"새창열림\">한국에너지공단</a></li>\n\t\t\t\t\t<li class=\"header_top_num\"><span>신재생에너지 콜센터 <em>1855-3020</em></span></li>\n\t\t\t\t\t<li class=\"header_top_num\"><span>태양광 피해상담 센터 <em>1670-4260</em></span></li>\n\t\t\t\t\t<li class=\"header_top_num\"><span>고장접수지원센터 <em>1544-0940</em></span></li>\n\t\t\t\t</ul>\n\t\t\t\t<div class=\"header_inner_bott\">\n\t\t\t\t\t<h1><a href=\"/biz/main/main.do\"><img src=\"/biz/images/common/logo.png\" alt=\"한국에너지공단 신재생에너지센터\"></a></h1>\n\t\t\t\t\t\n\t\t\t\t\t<!-- 모바일 상단 버튼 -->\n\t\t\t\t\t<div class=\"m_header_btn\">\n\t\t\t\t\t\t<a href=\"javascript:;\" class=\"m_search_btn\"><span>검색버튼</span></a>\n\t\t\t\t\t\t<a href=\"javascript:;\" class=\"m_menu_btn\"><span>모바일 메뉴 버튼</span></a>\n\t\t\t\t\t</div>\n\t\t\t\t\t<!--// 모바일 상단 버튼 -->\n\t\t\t\t\t\n\t\t\t\t\t<!--pc_gnb_wrap-->\n\t\t\t\t\t<div class=\"gnb_wrap pc_menu_wrap\" id=\"gnb\">\n\t\t\t\t\t\t<ul class=\"gnb_dep01 fix\">\n\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t<a href=\"javascript:void(0);\">주요사업</a>\n\t\t\t\t\t\t\t\t<div class=\"gnb_dep02_wrap\">\n\t\t\t\t\t\t\t\t\t<p class=\"gnb_dep02_tit type01\"><span>주요사업</span></p>\n\t\t\t\t\t\t\t\t\t<ul class=\"gnb_dep02 fix sty03_03\">\n\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t\t\t\t\t<a href=\"javascript:;\"><span>신재생에너지 보급확대</span></a>\n\t\t\t\t\t\t\t\t\t\t\t<ul class=\"gnb_dep03\">\n\t\t\t\t\t\t\t\t\t\t\t\t<li><a href=\"/biz/introduce/new_engy/intro_home.do?gubun=A\"><span>주택지원</span></a></li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li><a href=\"/biz/introduce/new_engy/intro_build.do?gubun=A\"><span>건물지원</span></a></li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li><a href=\"/biz/introduce/new_engy/intro_cvg.do?gubun=A\"><span>융복합지원</span></a></li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li><a href=\"/biz/introduce/new_engy/intro_region.do?gubun=A\"><span>확대기반조성사업</span></a></li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li><a href=\"/biz/introduce/new_engy/intro_solar.do?gubun=A\"><span>태양광대여사업</span></a></li>\n\t\t\t\t\t\t\t\t\t\t\t\t<li><a href=\"/biz/introduce/new_fin/intro_fi",
+  "detail_page_analysis": {
+    "url": "https://www.knrec.or.kr/biz/faq/faq_view.do?no=422&depth_1=A010000&depth_2=A011000",
+    "title": "신·재생에너지센터 | FAQ 및 질문하기 | 신재생에너지 보급확대 | | ESS·EMS 융합시스템 보급사업은 무엇인가요?",
+    "content_selectors": [
+      {
+        "selector": ".album_view_txt .p_txt",
+        "element_count": 1,
+        "content_length": 95,
+        "content_preview": "초기 투자 부담이 높은 ESS, EMS 등 에너지신산업 기술을 융합한 시스템 구축비용의 일부를 지원하여\nESS 초기시장을 창출하고 성공사례를 확산 및 유도하는 사업입니다."
+      },
+      {
+        "selector": ".album_view_txt",
+        "element_count": 1,
+        "content_length": 95,
+        "content_preview": "초기 투자 부담이 높은 ESS, EMS 등 에너지신산업 기술을 융합한 시스템 구축비용의 일부를 지원하여\nESS 초기시장을 창출하고 성공사례를 확산 및 유도하는 사업입니다."
+      }
+    ],
+    "title_selectors": [
+      {
+        "selector": "h2",
+        "element_count": 2,
+        "title_text": "FAQ 및 질문하기"
+      }
+    ],
+    "main_content": "초기 투자 부담이 높은 ESS, EMS 등 에너지신산업 기술을 융합한 시스템 구축비용의 일부를 지원하여\nESS 초기시장을 창출하고 성공사례를 확산 및 유도하는 사업입니다.",
+    "html_saved": "/Users/jaeho/Documents/GitHub/scrapy-selenium/crawler/output/analysis/knrec/detail_page_sample.html"
+  },
+  "recommended_content_selector": ".album_view_txt .p_txt",
+  "recommended_title_selector": "h2"
+}

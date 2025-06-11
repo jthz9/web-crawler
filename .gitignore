@@ -62,3 +62,4 @@ crawler/output/logs/*.log
 *.tmp
 *.temp 
 
+*.html
