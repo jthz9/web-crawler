@@ -1,421 +1,383 @@
 """
-KNREC FAQ 크롤링 스파이더
-간편검색 탭의 모든 FAQ 항목을 수집합니다.
-테스트 모드와 실제 크롤링 모드를 지원합니다.
+한국에너지공단 신재생에너지센터 FAQ 크롤링 스파이더
+단순화된 베이스 클래스를 상속받아 순수 Selenium 방식으로 크롤링합니다.
 """
-import scrapy
-import logging
-import os
-import json
-import re
-from datetime import datetime
 import time
-import glob
+import logging
+import scrapy
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from .base import BaseFAQSpider
 from crawler.items import RenewableEnergyItem
-from crawler.spiders.base import BaseRenewableEnergySpider
 
-class KnrecFaqSpider(BaseRenewableEnergySpider):
-    """
-    KNREC FAQ 크롤링 스파이더
-    간편검색 탭의 FAQ 항목을 수집합니다.
-    """
-    name = "knrec_faq"
-    allowed_domains = ["knrec.or.kr"]
-    start_urls = [
-        "https://www.knrec.or.kr/biz/faq/faq_list01.do"  # 간편검색 탭 URL
-    ]
+
+class KnrecFaqSpider(BaseFAQSpider):
+    """한국에너지공단 신재생에너지센터 FAQ 크롤링 스파이더"""
     
-    # 페이지 로딩 대기 시간 설정
-    page_load_delay = 3
+    name = 'knrec_faq'
+    allowed_domains = ['knrec.or.kr']
+    start_urls = ['https://www.knrec.or.kr/biz/faq/faq_list01.do']
     
     def __init__(self, *args, **kwargs):
-        super(KnrecFaqSpider, self).__init__(*args, **kwargs)
-        # 테스트 모드에서는 최대 10개의 FAQ만 크롤링
-        if self.mode == 'test':
-            self.max_items = 10
-        else:
-            self.max_items = 500  # 실제 모드에서는 더 많은 항목 크롤링 (증가)
+        super().__init__(*args, **kwargs)
         
-        # 이미 방문한 FAQ URL을 저장하는 집합
-        self.visited_urls = set()
-        
-        # 현재 페이지 번호
-        self.current_page = 1
-        self.max_pages = 15 if self.mode == 'test' else 35  # 테스트 모드에서 15페이지까지 테스트
-        
-        # 분석 결과 로드
-        self.analysis_result = self._load_analysis_result()
-        
-        # 간편검색 탭 클릭 여부를 추적하는 플래그
-        self.simple_search_tab_clicked = False
-        
-    def _load_analysis_result(self):
-        """분석 결과 파일 로드"""
-        try:
-            # 가장 최근의 분석 결과 파일 찾기
-            analysis_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'output', 'analysis', 'knrec')
-            analysis_files = glob.glob(os.path.join(analysis_dir, 'knrec_faq_analysis_*.json'))
-            
-            if not analysis_files:
-                self.logger.warning("분석 결과 파일을 찾을 수 없습니다. 기본 설정을 사용합니다.")
-                return {
-                    "faq_selector_used": "ul.result_list li",
-                    "pagination": []
-                }
-            
-            # 가장 최신 파일 선택
-            latest_file = max(analysis_files, key=os.path.getctime)
-            self.logger.info(f"분석 결과 파일 로드: {latest_file}")
-            
-            with open(latest_file, 'r', encoding='utf-8') as f:
-                result = json.load(f)
-                
-            # 필요한 정보 확인 및 로그 출력
-            if "faq_selector_used" in result:
-                self.logger.info(f"FAQ 선택자: {result['faq_selector_used']}")
-            if "faq_count" in result:
-                self.logger.info(f"분석된 FAQ 항목 수: {result['faq_count']}")
-            if "pagination" in result:
-                self.logger.info(f"페이지네이션 링크 수: {len(result['pagination'])}")
-                
-            return result
-            
-        except Exception as e:
-            self.logger.error(f"분석 결과 로드 중 오류: {str(e)}")
-            return {
-                "faq_selector_used": "ul.result_list li",
-                "pagination": []
-            }
+        # 크롤링 통계
+        self.total_pages = 0
+        self.processed_pages = 0
+        self.extracted_faqs = 0
+        self.duplicate_faqs = 0
+        self.seen_urls = set()
+    
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        """Scrapy crawler에서 스파이더 생성"""
+        spider = super().from_crawler(crawler, *args, **kwargs)
+        return spider
     
     def start_requests(self):
-        """시작 요청 생성"""
-        self.logger.info(f"KNREC FAQ 크롤링 시작 (모드: {self.mode})")
-        
+        """크롤링 시작"""
         for url in self.start_urls:
-            yield scrapy.Request(
-                url=url,
-                callback=self.parse,
-                meta={
-                    'selenium': True,
-                    'wait_time': 15,
-                    'driver_window_size': (1920, 1080),
-                    'driver_options': [
-                        '--disable-popup-blocking',
-                        '--disable-notifications'
-                    ]
-                }
-            )
+            yield scrapy.Request(url=url, callback=self.parse)
     
     def parse(self, response):
-        """FAQ 목록 페이지 파싱"""
-        self.logger.info(f"현재 URL: {response.url}")
-        self.logger.info(f"페이지 제목: {response.css('title::text').get()}")
+        """메인 파싱 로직"""
+        self.logger.info("=== KNREC FAQ 크롤링 시작 ===")
         
-        # 셀레니움 드라이버 가져오기
-        driver = response.meta.get('driver')
-        if not driver:
-            self.logger.error("셀레니움 드라이버를 찾을 수 없습니다.")
+        # 실제 크롤링 수행 및 Item 생성
+        yield from self.crawl_faqs()
+    
+    def crawl_faqs(self):
+        """실제 FAQ 크롤링 로직 - Item을 yield"""
+        
+        # Selenium 초기화
+        if not self.setup_selenium():
+            self.logger.error("Selenium 초기화 실패")
             return
         
-        # 페이지 소스 저장 (테스트 모드에서만)
+        # 분석 결과에서 설정 로드
+        self.load_crawling_config()
+        
+        # 첫 페이지 접근
+        if not self.selenium_get(self.start_urls[0], wait_for_element="ul.result_list"):
+            self.logger.error("초기 페이지 로드 실패")
+            return
+        
+        # 간편검색 탭 클릭
+        self.click_simple_search_tab()
+        
+        # 전체 페이지 수 확인
+        self.determine_total_pages()
+        
+        # 모든 페이지 크롤링하고 Item yield
+        yield from self.crawl_all_pages()
+        
+        # 크롤링 완료 요약
+        self.log_crawling_summary()
+    
+    def load_crawling_config(self):
+        """분석 결과에서 크롤링 설정 로드"""
+        if not self.analysis_result:
+            self.logger.warning("분석 결과 없음 - 기본 설정 사용")
+            self.faq_selector = "ul.result_list li"
+            self.content_selector = ".album_view_txt .p_txt"
+            self.simple_search_tab = "li:nth-child(2) a"
+            return
+        
+        # 분석 결과에서 설정 추출
+        self.faq_selector = self.get_analysis_config('best_selectors.faq_selector', "ul.result_list li")
+        self.content_selector = self.get_analysis_config('best_selectors.content_selector', ".album_view_txt .p_txt")
+        self.simple_search_tab = self.get_analysis_config('simple_search_tab', "li:nth-child(2) a")
+        
+        self.logger.info(f"크롤링 설정:")
+        self.logger.info(f"  - FAQ 선택자: {self.faq_selector}")
+        self.logger.info(f"  - 내용 선택자: {self.content_selector}")
+        self.logger.info(f"  - 간편검색 탭: {self.simple_search_tab}")
+    
+    def click_simple_search_tab(self):
+        """간편검색 탭 클릭"""
+        try:
+            if self.selenium_click(self.simple_search_tab, timeout=5):
+                self.logger.info("간편검색 탭 클릭 성공")
+                time.sleep(2)  # 페이지 로딩 대기
+            else:
+                self.logger.warning("간편검색 탭 클릭 실패 - 기본 탭으로 진행")
+        except Exception as e:
+            self.logger.warning(f"간편검색 탭 클릭 중 오류: {e}")
+    
+    def determine_total_pages(self):
+        """전체 페이지 수 확인"""
+        try:
+            # 여러 방법으로 페이지 수 확인 시도
+            max_page = 1
+            
+            # 1. 페이지네이션에서 숫자 확인
+            pagination_elements = self.selenium_find_elements(".pagination a, .paging a, .page_num a")
+            for element in pagination_elements:
+                text = element.text.strip()
+                if text.isdigit():
+                    max_page = max(max_page, int(text))
+            
+            # 2. 마지막 페이지 링크 확인
+            last_page_elements = self.selenium_find_elements("a[title*='마지막'], .last, .end")
+            for element in last_page_elements:
+                href = element.get_attribute('href')
+                if href and 'page=' in href:
+                    import re
+                    page_match = re.search(r'page=(\d+)', href)
+                    if page_match:
+                        max_page = max(max_page, int(page_match.group(1)))
+            
+            # 3. 전체 35페이지 사용
+            if max_page < 35:
+                max_page = 35
+            
+            self.total_pages = max_page
+            self.logger.info(f"전체 페이지 수: {self.total_pages}")
+            
+        except Exception as e:
+            self.logger.error(f"페이지 수 확인 실패: {e}")
+            self.total_pages = 35  # 기본값
+    
+    def crawl_all_pages(self):
+        """모든 페이지 크롤링하고 Item yield"""
+        
+        # 크롤링할 페이지 결정
         if self.mode == 'test':
-            try:
-                page_source = driver.page_source
-                os.makedirs('./output/data', exist_ok=True)
-                with open('./output/data/page_source.html', 'w', encoding='utf-8') as f:
-                    f.write(page_source)
-                self.logger.info("페이지 소스를 ./output/data/page_source.html에 저장했습니다.")
-            except Exception as e:
-                self.logger.error(f"페이지 소스 저장 중 오류 발생: {e}")
-        
-        # 간편검색 탭 클릭 시도 (첫 페이지에서만)
-        if not self.simple_search_tab_clicked:
-            try:
-                self.logger.info("간편검색 탭 클릭 시도...")
-                tab_simple = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), '간편검색') or contains(@title, '간편검색')]")))
-                self.logger.info(f"간편검색 탭 발견: {tab_simple.text}")
-                tab_simple.click()
-                self.logger.info("간편검색 탭 클릭 완료")
-                time.sleep(5)  # 탭 클릭 후 대기
-                
-                # 간편검색 탭 클릭 후 페이지 소스 저장 (테스트 모드에서만)
-                if self.mode == 'test':
-                    try:
-                        page_source = driver.page_source
-                        with open('./output/data/page_source_after_tab.html', 'w', encoding='utf-8') as f:
-                            f.write(page_source)
-                        self.logger.info("탭 클릭 후 페이지 소스를 ./output/data/page_source_after_tab.html에 저장했습니다.")
-                    except Exception as e:
-                        self.logger.error(f"탭 클릭 후 페이지 소스 저장 중 오류 발생: {e}")
-                
-                # 간편검색 탭 클릭 플래그 설정
-                self.simple_search_tab_clicked = True
-            except Exception as e:
-                self.logger.error(f"간편검색 탭 클릭 오류: {str(e)}")
-                # 이미 간편검색 탭에 있을 수 있으므로 계속 진행
-                self.simple_search_tab_clicked = True  # 오류가 발생해도 다시 시도하지 않도록 플래그 설정
+            pages_to_crawl = list(range(1, self.total_pages + 1))  # 테스트도 전체 페이지
+            self.logger.info(f"테스트 모드: 전체 {len(pages_to_crawl)}개 페이지 크롤링")
         else:
-            self.logger.info("이미 간편검색 탭을 클릭했으므로 건너뜁니다.")
+            pages_to_crawl = list(range(1, self.total_pages + 1))
+            self.logger.info(f"전체 모드: {len(pages_to_crawl)}개 페이지 크롤링")
         
-        # FAQ 항목 찾기 - 결과 목록에서 각 항목의 링크 추출
-        try:
-            self.logger.info("FAQ 항목 링크 추출 시도...")
-            
-            # 분석 결과에서 FAQ 선택자 가져오기
-            faq_selector = self.analysis_result.get("faq_selector_used", "ul.result_list li")
-            self.logger.info(f"사용할 FAQ 선택자: {faq_selector}")
-            
-            # 결과 목록 찾기
-            result_list = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "ul.result_list"))
-            )
-            
-            # 모든 FAQ 항목의 URL과 제목을 수집
-            faq_items = []
-            li_elements = result_list.find_elements(By.TAG_NAME, "li")
-            self.logger.info(f"FAQ 항목 수: {len(li_elements)}")
-            
-            for li in li_elements:
-                try:
-                    link = li.find_element(By.TAG_NAME, "a")
-                    url = link.get_attribute("href")
-                    title_elem = link.find_element(By.CSS_SELECTOR, "span.result_tit")
-                    title = title_elem.text.strip()
-                    
-                    # 내용 미리보기 추출
-                    content_preview = ""
-                    try:
-                        content_elem = link.find_element(By.CSS_SELECTOR, ".result_txt")
-                        content_preview = content_elem.text.strip().replace("....", "")
-                    except:
-                        pass
-                    
-                    faq_items.append({
-                        "url": url, 
-                        "title": title,
-                        "content_preview": content_preview
-                    })
-                except Exception as e:
-                    self.logger.error(f"항목 정보 추출 중 오류: {str(e)}")
-            
-            # 각 페이지의 첫 번째 FAQ만 크롤링 (테스트 목적)
-            if faq_items:
-                first_faq = faq_items[0]  # 첫 번째 FAQ만 선택
-                self.logger.info(f"페이지 {self.current_page}의 첫 번째 FAQ 크롤링: {first_faq['title']}")
-                
-                # 상세 페이지로 이동하여 전체 내용 추출
-                yield scrapy.Request(
-                    url=first_faq["url"],
-                    callback=self.parse_faq_detail,
-                    dont_filter=True,  # 중복 URL 필터링 비활성화
-                    meta={
-                        'selenium': True,
-                        'wait_time': 5,
-                        'title': first_faq["title"],
-                        'content_preview': first_faq["content_preview"],
-                        'page': self.current_page  # 현재 페이지 번호 추가
-                    }
-                )
-            else:
-                self.logger.warning(f"페이지 {self.current_page}에서 FAQ 항목을 찾을 수 없습니다.")
-            
-            # 다음 페이지 처리
-            if self.current_page < self.max_pages:
-                self.current_page += 1
-                # 다음 페이지 링크를 클릭
-                next_page_clicked = self._click_next_page(driver)
-                
-                if next_page_clicked:
-                    self.logger.info(f"다음 페이지로 이동 완료 (현재 페이지: {self.current_page})")
-                    # 페이지 로딩 대기
-                    time.sleep(5)
-                    
-                    # 현재 페이지에서 다시 파싱 (재귀 호출)
-                    yield from self.parse(response)
-                else:
-                    self.logger.info("다음 페이지를 찾을 수 없거나 클릭할 수 없습니다.")
-            else:
-                self.logger.info(f"최대 페이지 수({self.max_pages})에 도달했습니다.")
-        except Exception as e:
-            self.logger.error(f"FAQ 항목 링크 추출 중 오류: {str(e)}")
-            import traceback
-            self.logger.error(traceback.format_exc())
-    
-    def parse_faq_detail(self, response):
-        """FAQ 상세 페이지 파싱"""
-        self.logger.info(f"FAQ 상세 페이지 파싱: {response.url}")
-        
-        # 셀레니움 드라이버 가져오기
-        driver = response.meta.get('driver')
-        if not driver:
-            self.logger.error("셀레니움 드라이버를 찾을 수 없습니다.")
-            return
-        
-        try:
-            # 페이지 소스 저장 (테스트 모드에서만)
-            if self.mode == 'test':
-                try:
-                    page_source = driver.page_source
-                    file_name = f"./output/data/faq_detail_{response.url.split('=')[-1]}.html"
-                    with open(file_name, 'w', encoding='utf-8') as f:
-                        f.write(page_source)
-                    self.logger.info(f"FAQ 상세 페이지 소스를 {file_name}에 저장했습니다.")
-                except Exception as e:
-                    self.logger.error(f"FAQ 상세 페이지 소스 저장 중 오류 발생: {e}")
-            
-            # 제목 가져오기 (이미 메타에서 가져온 제목 사용)
-            title = response.meta.get('title', '')
-            
-            # 백업용 내용 미리보기
-            content_preview = response.meta.get('content_preview', '')
-            
-            # 현재 페이지 번호 가져오기
-            page = response.meta.get('page', 0)
-            
-            # 항상 상세 페이지에서 전체 내용을 추출하도록 시도
-            content = ""
+        # 각 페이지 크롤링
+        for page_num in pages_to_crawl:
             try:
-                # 현재 실제 드라이버 URL 확인 (디버깅용)
-                current_driver_url = driver.current_url
-                self.logger.info(f"드라이버 현재 URL: {current_driver_url}")
-                self.logger.info(f"요청된 URL: {response.url}")
+                self.logger.info(f"페이지 {page_num} 크롤링 시작")
                 
-                # URL이 다르면 실제로 해당 페이지로 이동
-                if current_driver_url != response.url:
-                    self.logger.info(f"URL이 다릅니다. {response.url}로 이동합니다.")
-                    driver.get(response.url)
-                    time.sleep(3)  # 페이지 로딩 대기
+                if self.navigate_to_page(page_num):
+                    # Item들을 yield
+                    yield from self.extract_page_items(page_num)
+                    self.processed_pages += 1
                 
-                # 페이지 로딩 대기
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, ".album_view_txt"))
-                )
+                time.sleep(1)  # 페이지 간 간격
                 
-                # 분석 결과에서 찾은 최적의 선택자 사용
-                best_content_selector = self.analysis_result.get("recommended_content_selector", ".album_view_txt .p_txt")
-                self.logger.info(f"추천 내용 선택자 사용: {best_content_selector}")
-                
-                # 상세 페이지에서 내용 추출
-                try:
-                    content_element = driver.find_element(By.CSS_SELECTOR, best_content_selector)
-                    content = content_element.text.strip()
-                    self.logger.info(f"추천 선택자로 전체 내용 추출 성공 ({len(content)}자): {content[:100]}...")
-                except Exception as e:
-                    self.logger.error(f"추천 선택자({best_content_selector})로 내용 추출 중 오류: {e}")
-                    # 다른 선택자들도 시도해보기
-                    try:
-                        # 분석 결과에서 찾은 다른 가능한 선택자들
-                        alternative_selectors = []
-                        if "detail_page_analysis" in self.analysis_result and "content_selectors" in self.analysis_result["detail_page_analysis"]:
-                            for selector_info in self.analysis_result["detail_page_analysis"]["content_selectors"]:
-                                alternative_selectors.append(selector_info["selector"])
-                        
-                        # 기본 대체 선택자들도 추가
-                        alternative_selectors.extend([
-                            ".album_view_txt",
-                            ".content_area",
-                            ".faq_content", 
-                            ".view_content",
-                            ".board_view"
-                        ])
-                        
-                        for selector in alternative_selectors:
-                            try:
-                                content_element = driver.find_element(By.CSS_SELECTOR, selector)
-                                content = content_element.text.strip()
-                                if content and len(content) > 20:  # 충분한 내용이 있으면
-                                    self.logger.info(f"대체 선택자 {selector}로 내용 추출 성공 ({len(content)}자): {content[:100]}...")
-                                    break
-                            except:
-                                continue
-                    except Exception as e2:
-                        self.logger.error(f"대체 선택자로 내용 추출 중 오류: {e2}")
-            
             except Exception as e:
-                self.logger.error(f"상세 페이지 로딩 중 오류: {e}")
-            
-            # 상세 페이지에서 내용을 추출하지 못한 경우에만 미리보기 사용
-            if not content or len(content) < 20:
-                content = content_preview
-                self.logger.warning(f"상세 페이지 내용 추출 실패, 미리보기 내용 사용 ({len(content)}자): {content[:100]}...")
-            
-            if not content:
-                content = "내용을 추출할 수 없습니다."
-            
-            self.logger.info(f"FAQ 제목: {title[:50]}...")
-            self.logger.info(f"FAQ 최종 내용: {content[:150]}...")
-            
-            # 아이템 생성
-            item = self.create_item(
-                title=title,
-                content=content,
-                url=response.url,
-                source="한국에너지공단 신재생에너지센터",
-                date_published=datetime.now().strftime('%Y-%m-%d'),
-                document_type="FAQ",
-                file_urls=[]
-            )
-            
-            # 페이지 필드 추가
-            item['page'] = page
-            
-            # 아이템 카운트 증가
-            self.item_count += 1
-            
-            yield item
-            
-        except Exception as e:
-            self.logger.error(f"FAQ 상세 페이지 파싱 중 오류: {str(e)}")
-            import traceback
-            self.logger.error(traceback.format_exc())
+                self.logger.error(f"페이지 {page_num} 크롤링 실패: {e}")
+                continue
     
-    def _click_next_page(self, driver):
-        """다음 페이지 링크를 클릭하여 이동 - 직접 URL 방식"""
+    def navigate_to_page(self, page_number):
+        """특정 페이지로 이동"""
         try:
-            # 다음 페이지 번호 (현재 페이지)
-            next_page_number = self.current_page
-            self.logger.info(f"다음 페이지 번호: {next_page_number} 클릭 시도")
+            target_url = f"https://www.knrec.or.kr/biz/faq/faq_list01.do?page={page_number}&"
             
-            # 직접 URL로 이동 (가장 확실한 방법)
-            direct_url = f"https://www.knrec.or.kr/biz/faq/faq_list01.do?page={next_page_number}&"
-            self.logger.info(f"직접 URL로 이동: {direct_url}")
-            
-            driver.get(direct_url)
-            time.sleep(self.page_load_delay)
-            
-            self.current_page = next_page_number
-            self.logger.info(f"다음 페이지로 이동 완료 (현재 페이지: {self.current_page})")
-            return True
+            if self.selenium_get(target_url, wait_for_element="ul.result_list"):
+                self.click_simple_search_tab()  # 간편검색 탭 다시 클릭
+                self.logger.info(f"페이지 {page_number} 이동 성공")
+                return True
+            else:
+                self.logger.warning(f"페이지 {page_number} 이동 실패")
+                return False
                 
         except Exception as e:
-            self.logger.error(f"다음 페이지 링크 클릭 중 오류: {e}")
+            self.logger.error(f"페이지 {page_number} 이동 중 오류: {e}")
             return False
     
-    def detect_energy_type(self, text):
-        """텍스트에서 에너지 유형 감지"""
-        energy_types = {
-            '태양광': ['태양광', '태양 에너지', '솔라', 'solar', 'pv'],
-            '태양열': ['태양열', 'solar thermal'],
-            '풍력': ['풍력', '풍차', 'wind', '풍력발전'],
-            '수력': ['수력', '수력발전', 'hydro'],
-            '지열': ['지열', 'geothermal'],
-            '바이오': ['바이오', '바이오매스', 'bio', 'biomass'],
-            '연료전지': ['연료전지', 'fuel cell'],
-            '수소': ['수소', 'hydrogen'],
-            '폐기물': ['폐기물', 'waste'],
-            '해양': ['해양', '조력', '파력', 'ocean', 'tidal']
-        }
+    def extract_page_items(self, page_number):
+        """현재 페이지의 모든 FAQ를 Item으로 추출하고 yield (각 FAQ마다 페이지 새로고침)"""
+        try:
+            page_extracted = 0
+            
+            # 먼저 모든 FAQ URL을 수집 (DOM 변화 전에)
+            faq_urls = self.collect_faq_urls_from_page(page_number)
+            
+            if not faq_urls:
+                self.logger.warning(f"페이지 {page_number}: FAQ URL 없음")
+                return
+            
+            self.logger.info(f"페이지 {page_number}: {len(faq_urls)}개 FAQ URL 수집 완료")
+            
+            # 각 URL을 처리
+            for i, (title, url) in enumerate(faq_urls, 1):
+                try:
+                    # 중복 확인
+                    if url in self.seen_urls:
+                        self.duplicate_faqs += 1
+                        self.logger.debug(f"페이지 {page_number} FAQ {i}: 중복 제외 - {title[:30]}...")
+                        continue
+                    
+                    self.seen_urls.add(url)
+                    
+                    # 상세 내용 추출
+                    content = self.extract_detail_content(url, self.content_selector)
+                    
+                    # Item 생성 (page를 첫 번째 필드로)
+                    item = RenewableEnergyItem()
+                    item['page'] = page_number
+                    item['title'] = title
+                    item['content'] = content
+                    item['url'] = url
+                    item['source'] = "한국에너지공단 신재생에너지센터"
+                    item['document_type'] = "FAQ"
+                    item['date_published'] = time.strftime('%Y-%m-%d')
+                    item['spider'] = self.name
+                    
+                    self.extracted_faqs += 1
+                    page_extracted += 1
+                    self.logger.info(f"페이지 {page_number} FAQ {i}: 추출 완료 - {title[:30]}...")
+                    
+                    yield item
+                    
+                except Exception as e:
+                    self.logger.warning(f"페이지 {page_number} FAQ {i}: 추출 중 오류: {e}")
+                    continue
+            
+            self.logger.info(f"페이지 {page_number}: {page_extracted}개 새로운 FAQ 추출 완료")
+            
+        except Exception as e:
+            self.logger.error(f"페이지 {page_number} FAQ 추출 실패: {e}")
+    
+    def collect_faq_urls_from_page(self, page_number):
+        """페이지에서 모든 FAQ의 제목과 URL을 미리 수집"""
+        try:
+            faq_elements = self.selenium_find_elements(self.faq_selector)
+            if not faq_elements:
+                return []
+            
+            faq_urls = []
+            for i, element in enumerate(faq_elements):
+                try:
+                    title = self.extract_clean_title(element)
+                    url = self.extract_link(element)
+                    
+                    if title and url:
+                        faq_urls.append((title, url))
+                        self.logger.debug(f"FAQ {i+1} URL 수집: {title[:30]}...")
+                    else:
+                        self.logger.warning(f"FAQ {i+1}: 제목 또는 URL 없음")
+                        
+                except Exception as e:
+                    self.logger.warning(f"FAQ {i+1} URL 수집 중 오류: {e}")
+                    continue
+            
+            return faq_urls
+            
+        except Exception as e:
+            self.logger.error(f"페이지 {page_number} FAQ URL 수집 실패: {e}")
+            return []
+    
+    def extract_link(self, element):
+        """링크 추출 (베이스 클래스 메소드 오버라이드)"""
+        try:
+            link_element = element.find_element(By.CSS_SELECTOR, 'a')
+            href = link_element.get_attribute('href')
+            if href:
+                # KNREC 전용 URL 처리
+                if href.startswith('/'):
+                    return f"https://www.knrec.or.kr{href}"
+                elif not href.startswith('http'):
+                    return f"https://www.knrec.or.kr/{href}"
+                return href
+        except NoSuchElementException:
+            pass
+        except Exception as e:
+            self.logger.warning(f"링크 추출 중 오류: {e}")
         
-        text = text.lower()
-        for energy_type, keywords in energy_types.items():
-            for keyword in keywords:
-                if keyword.lower() in text:
-                    return energy_type
+        return ""
+    
+    def extract_clean_title(self, element):
+        """깔끔한 제목만 추출 (질문 부분만)"""
+        try:
+            # a 태그에서 title 속성 우선 시도
+            link_element = element.find_element(By.CSS_SELECTOR, 'a')
+            title_attr = link_element.get_attribute('title')
+            if title_attr and title_attr.strip():
+                return title_attr.strip()
+            
+            # a 태그의 텍스트에서 질문 부분만 추출
+            link_text = link_element.text.strip()
+            if link_text:
+                # '?' 까지만 추출 (질문 부분)
+                if '?' in link_text:
+                    question_part = link_text.split('?')[0] + '?'
+                    return question_part.strip()
+                # '?' 가 없으면 첫 번째 줄만 추출
+                elif '\n' in link_text:
+                    return link_text.split('\n')[0].strip()
+                else:
+                    return link_text
+            
+        except Exception as e:
+            self.logger.warning(f"제목 추출 중 오류: {e}")
         
-        return '기타'
+        # 베이스 클래스 메소드 fallback
+        return self.extract_text(element, 'a, .title, h3, h4, strong, .result_tit')
+    
+    def extract_detail_content(self, url, content_selector):
+        """상세 페이지에서 전체 내용 추출 (베이스 클래스 메소드 오버라이드)"""
+        if not url:
+            return ""
+        
+        try:
+            # 상세 페이지로 이동
+            if not self.selenium_get(url, wait_for_element=content_selector):
+                self.logger.warning(f"상세 페이지 로드 실패: {url}")
+                return ""
+            
+            # 내용 요소들 찾기
+            content_elements = self.selenium_find_elements(content_selector)
+            
+            if not content_elements:
+                self.logger.warning(f"내용 요소 없음: {url}")
+                return ""
+            
+            # 모든 텍스트 수집 및 중복 제거
+            all_texts = []
+            for element in content_elements:
+                text = element.text.strip()
+                if text and text not in all_texts:
+                    all_texts.append(text)
+            
+            full_content = '\n\n'.join(all_texts)
+            
+            self.logger.debug(f"상세 내용 추출 완료 ({len(full_content)}자)")
+            return full_content
+            
+        except Exception as e:
+            self.logger.error(f"상세 내용 추출 실패: {e}")
+            return ""
+    
+    def log_crawling_summary(self):
+        """크롤링 완료 요약 로그"""
+        self.logger.info("=== KNREC FAQ 크롤링 완료 ===")
+        self.logger.info(f"총 페이지 수: {self.total_pages}")
+        self.logger.info(f"처리된 페이지: {self.processed_pages}")
+        self.logger.info(f"추출된 FAQ: {self.extracted_faqs}")
+        self.logger.info(f"중복 제거: {self.duplicate_faqs}")
+        self.logger.info(f"최종 고유 FAQ: {len(self.seen_urls)}")
+        
+        # 성공률 계산
+        if self.total_pages > 0:
+            success_rate = (self.processed_pages / self.total_pages) * 100
+            self.logger.info(f"페이지 처리 성공률: {success_rate:.1f}%")
+    
+    def closed(self, reason):
+        """스파이더 종료 시 호출"""
+        super().closed(reason)
+        
+        # 최종 요약 저장
+        try:
+            summary = {
+                'spider_name': self.name,
+                'crawling_mode': self.mode,
+                'total_pages': self.total_pages,
+                'processed_pages': self.processed_pages,
+                'extracted_faqs': self.extracted_faqs,
+                'duplicate_faqs': self.duplicate_faqs,
+                'unique_faqs': len(self.seen_urls),
+                'crawled_at': time.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            
+            self.logger.info(f"크롤링 요약: {summary}")
+            
+        except Exception as e:
+            self.logger.error(f"요약 정보 생성 실패: {e}")
