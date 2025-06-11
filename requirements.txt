@@ -1,0 +1,24 @@
+# Scrapy 웹 크롤링 프레임워크
+scrapy>=2.11.0
+
+# Selenium 웹 브라우저 자동화
+selenium>=4.15.0
+
+# 웹드라이버 자동 관리
+webdriver-manager>=4.0.0
+
+# HTTP 요청 라이브러리
+requests>=2.31.0
+
+# HTML 파싱
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# 데이터 처리
+pandas>=2.1.0
+
+# 날짜/시간 처리
+python-dateutil>=2.8.0
+
+# 로깅 및 유틸리티
+colorama>=0.4.6
