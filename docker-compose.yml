@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  # 메인 RAG 애플리케이션
+  rag-app:
+    build: .
+    container_name: renewable-energy-rag
+    volumes:
+      - .:/app
+      - ./output:/app/output
+      - ./rag_system:/app/rag_system
+    ports:
+      - "8000:8000" # FastAPI 포트
+      - "8888:8888" # Jupyter Notebook (옵션)
+    environment:
+      - PYTHONPATH=/app
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - rag-network
+    command: bash
+    stdin_open: true
+    tty: true
+
+  # ChromaDB 벡터 데이터베이스 (옵션)
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chroma-db
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    networks:
+      - rag-network
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  chroma-data:

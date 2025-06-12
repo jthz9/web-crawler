@@ -82,7 +82,7 @@ RenewableEnergyPipeline
 - **크롤링**: 실제 데이터 수집
 - **처리**: 데이터 정제 및 저장
 
-### 2. Scrapy-Selenium 조합
+### 2. Scrapy & Selenium
 
 **Scrapy**: 웹 크롤링 및 웹 스크래핑 전용 Python 프레임워크
 
@@ -105,7 +105,7 @@ RenewableEnergyPipeline
 - 사용자 상호작용 시뮬레이션 (클릭, 입력 등)
 - SPA(Single Page Application) 지원
 
-**구현 조합**:
+**Scrapy-Selenium 조합**:
 
 - Scrapy 미들웨어를 통해 Selenium WebDriver 연결
 - SeleniumRequest 페이지 로드
